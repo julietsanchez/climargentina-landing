@@ -199,13 +199,13 @@ const LandingClimargentina = () => {
         scrolled ? 'shadow-xl backdrop-blur-sm bg-clima-white/95' : 'shadow-md'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16 sm:h-20">
+          <div className="flex justify-between items-center h-16 md:h-20">
             {/* Logo */}
             <div className="flex-shrink-0">
               <img
                 src="/logo-climargentina.svg"
                 alt="Climargentina Logo"
-                className="h-8 sm:h-10 md:h-12 w-auto object-contain"
+                className="h-8 md:h-12 w-auto object-contain"
               />
             </div>
 
@@ -263,28 +263,28 @@ const LandingClimargentina = () => {
 
           {/* Menú Móvil Desplegable */}
           {isMenuOpen && (
-            <div className="md:hidden pb-4 space-y-1.5 sm:space-y-2">
+            <div className="md:hidden pb-4 space-y-2">
               <button
                 onClick={() => handleScrollTo('inicio')}
-                className="block w-full text-left px-4 py-2.5 sm:py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium text-sm sm:text-base touch-manipulation"
+                className="block w-full text-left px-4 py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium touch-manipulation"
               >
                 Inicio
               </button>
               <button
                 onClick={() => handleScrollTo('nosotros')}
-                className="block w-full text-left px-4 py-2.5 sm:py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium text-sm sm:text-base touch-manipulation"
+                className="block w-full text-left px-4 py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium touch-manipulation"
               >
                 Nosotros
               </button>
               <button
                 onClick={() => handleScrollTo('servicios')}
-                className="block w-full text-left px-4 py-2.5 sm:py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium text-sm sm:text-base touch-manipulation"
+                className="block w-full text-left px-4 py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium touch-manipulation"
               >
                 Servicios
               </button>
               <button
                 onClick={() => handleScrollTo('contacto')}
-                className="block w-full text-left px-4 py-2.5 sm:py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium text-sm sm:text-base touch-manipulation"
+                className="block w-full text-left px-4 py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium touch-manipulation"
               >
                 Contacto
               </button>
@@ -350,27 +350,27 @@ const LandingClimargentina = () => {
                 {index === currentSlide && (
                   <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full flex items-center justify-center">
                     <div className="flex flex-col items-center justify-center text-center w-full">
-                      <div className="space-y-3 sm:space-y-4 md:space-y-6 max-w-4xl animate-fade-in-up px-2 sm:px-0">
+                      <div className="space-y-3 md:space-y-6 max-w-4xl animate-fade-in-up px-2 md:px-0">
                         {/* Título */}
-                        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-clima-white leading-tight drop-shadow-2xl">
+                        <h1 className="text-2xl sm:text-4xl md:text-6xl lg:text-7xl font-bold text-clima-white leading-tight drop-shadow-2xl">
                           {index === 0 ? (
                             <>
                               Somos expertos en{' '}
-                              <span className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 gradient-shimmer text-clima-white rounded-lg inline-block text-base sm:text-inherit">
+                              <span className="px-2 md:px-4 py-1 md:py-2 gradient-shimmer text-clima-white rounded-lg inline-block text-2xl sm:text-4xl md:text-6xl lg:text-7xl">
                                 Climatización Industrial
                               </span>
                             </>
                           ) : index === 1 ? (
                             <>
                               Mantenimiento industrial para{' '}
-                              <span className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 gradient-shimmer text-clima-white rounded-lg inline-block text-base sm:text-inherit">
+                              <span className="px-2 md:px-4 py-1 md:py-2 gradient-shimmer text-clima-white rounded-lg inline-block text-2xl sm:text-4xl md:text-6xl lg:text-7xl">
                                 Empresas
                               </span>
                             </>
                           ) : (
                             <>
                               Venta de equipos de{' '}
-                              <span className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 gradient-shimmer text-clima-white rounded-lg inline-block text-base sm:text-inherit">
+                              <span className="px-2 md:px-4 py-1 md:py-2 gradient-shimmer text-clima-white rounded-lg inline-block text-2xl sm:text-4xl md:text-6xl lg:text-7xl">
                                 Aire Acondicionado
                               </span>
                             </>
@@ -378,19 +378,19 @@ const LandingClimargentina = () => {
                         </h1>
 
                         {/* Subtítulo */}
-                        <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-clima-white/95 leading-relaxed max-w-3xl mx-auto drop-shadow-lg px-2 sm:px-4">
+                        <p className="text-sm md:text-xl lg:text-2xl text-clima-white/95 leading-relaxed max-w-3xl mx-auto drop-shadow-lg px-2 md:px-4">
                           {slide.subtitle}
                         </p>
 
                         {/* CTA */}
-                        <div className="pt-2 sm:pt-4 flex justify-center items-center px-2 sm:px-4">
+                        <div className="pt-2 md:pt-4 flex justify-center items-center px-2 md:px-4">
                           <button
                             onClick={() => handleCTAClick(slide.whatsappUrl)}
-                            className="flex items-center justify-center gap-2 px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 gradient-shimmer text-clima-white font-bold text-sm sm:text-base md:text-lg rounded-xl shadow-2xl hover:shadow-red-500/50 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-clima-red focus:ring-offset-2 w-full max-w-xs sm:max-w-none sm:w-auto"
+                            className="flex items-center justify-center gap-2 px-6 md:px-10 py-2.5 md:py-4 gradient-shimmer text-clima-white font-bold text-sm md:text-lg rounded-xl shadow-2xl hover:shadow-red-500/50 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-clima-red focus:ring-offset-2 w-full max-w-xs md:max-w-none md:w-auto"
                             aria-label="Consultar por WhatsApp"
                           >
                             <svg
-                              className="w-5 h-5 sm:w-6 sm:h-6"
+                              className="w-5 h-5 md:w-6 md:h-6"
                               fill="currentColor"
                               viewBox="0 0 24 24"
                               aria-hidden="true"
@@ -412,11 +412,11 @@ const LandingClimargentina = () => {
           {/* Flechas de navegación */}
           <button
             onClick={prevSlide}
-            className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 bg-clima-white/20 backdrop-blur-md hover:bg-clima-white/30 text-clima-white p-2.5 sm:p-3 md:p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-clima-white focus:ring-offset-2 touch-manipulation"
+            className="absolute left-2 md:left-8 top-1/2 -translate-y-1/2 z-20 bg-clima-white/20 backdrop-blur-md hover:bg-clima-white/30 text-clima-white p-2.5 md:p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-clima-white focus:ring-offset-2 touch-manipulation"
             aria-label="Slide anterior"
           >
             <svg
-              className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8"
+              className="w-5 h-5 md:w-8 md:h-8"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -432,11 +432,11 @@ const LandingClimargentina = () => {
 
           <button
             onClick={nextSlide}
-            className="absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 bg-clima-white/20 backdrop-blur-md hover:bg-clima-white/30 text-clima-white p-2.5 sm:p-3 md:p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-clima-white focus:ring-offset-2 touch-manipulation"
+            className="absolute right-2 md:right-8 top-1/2 -translate-y-1/2 z-20 bg-clima-white/20 backdrop-blur-md hover:bg-clima-white/30 text-clima-white p-2.5 md:p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-clima-white focus:ring-offset-2 touch-manipulation"
             aria-label="Slide siguiente"
           >
             <svg
-              className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8"
+              className="w-5 h-5 md:w-8 md:h-8"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -451,15 +451,15 @@ const LandingClimargentina = () => {
           </button>
 
           {/* Dots de navegación */}
-          <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 sm:gap-2 md:gap-3">
+          <div className="absolute bottom-4 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 md:gap-3">
             {slides.map((_, index) => (
               <button
                 key={index}
                 onClick={() => goToSlide(index)}
                 className={`transition-all duration-300 rounded-full focus:outline-none focus:ring-4 focus:ring-clima-white focus:ring-offset-2 touch-manipulation ${
                   index === currentSlide
-                    ? 'w-6 sm:w-8 md:w-10 h-2.5 sm:h-3 md:h-4 bg-clima-white'
-                    : 'w-2.5 sm:w-3 md:w-4 h-2.5 sm:h-3 md:h-4 bg-clima-white/50 hover:bg-clima-white/75'
+                    ? 'w-6 md:w-10 h-2.5 md:h-4 bg-clima-white'
+                    : 'w-2.5 md:w-4 h-2.5 md:h-4 bg-clima-white/50 hover:bg-clima-white/75'
                 }`}
                 aria-label={`Ir al slide ${index + 1}`}
                 aria-current={index === currentSlide ? 'true' : 'false'}
@@ -469,9 +469,9 @@ const LandingClimargentina = () => {
         </div>
 
         {/* Indicador de scroll */}
-        <div className="absolute bottom-12 sm:bottom-20 md:bottom-24 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
+        <div className="absolute bottom-12 md:bottom-24 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
           <svg
-            className="w-5 h-5 sm:w-6 sm:h-6 text-clima-white"
+            className="w-5 h-5 md:w-6 md:h-6 text-clima-white"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
@@ -488,11 +488,11 @@ const LandingClimargentina = () => {
       </section>
 
       {/* Carruseles de Clientes y Marcas */}
-      <section className="py-12 sm:py-16 bg-clima-white overflow-hidden">
+      <section className="py-12 md:py-16 bg-clima-white overflow-hidden">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           {/* Carrusel de Clientes */}
-          <div className="mb-12 sm:mb-16">
-            <h2 className="text-base sm:text-lg md:text-xl font-medium uppercase tracking-wider text-clima-blue text-center mb-6 sm:mb-8">
+          <div className="mb-12 md:mb-16">
+            <h2 className="text-base md:text-xl font-medium uppercase tracking-wider text-clima-blue text-center mb-6 md:mb-8">
               Nuestros clientes
             </h2>
             <div className="relative w-full overflow-hidden">
@@ -501,13 +501,13 @@ const LandingClimargentina = () => {
                 {[...clientesLogos, ...clientesLogos].map((logo, index) => (
                   <div
                     key={`clientes-${index}`}
-                    className="flex-shrink-0 px-4 sm:px-6 md:px-8 flex items-center justify-center"
+                    className="flex-shrink-0 px-4 md:px-8 flex items-center justify-center"
                     style={{ width: '150px', minWidth: '150px' }}
                   >
                     <img
                       src={logo}
                       alt={`Cliente ${index + 1}`}
-                      className="h-10 sm:h-12 md:h-16 w-auto object-contain max-w-full"
+                      className="h-10 md:h-16 w-auto object-contain max-w-full"
                       loading="lazy"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
@@ -522,7 +522,7 @@ const LandingClimargentina = () => {
 
           {/* Carrusel de Marcas */}
           <div>
-            <h2 className="text-base sm:text-lg md:text-xl font-medium uppercase tracking-wider text-clima-blue text-center mb-6 sm:mb-8">
+            <h2 className="text-base md:text-xl font-medium uppercase tracking-wider text-clima-blue text-center mb-6 md:mb-8">
               Marcas con las que trabajamos
             </h2>
             <div className="relative w-full overflow-hidden">
@@ -531,13 +531,13 @@ const LandingClimargentina = () => {
                 {[...marcasLogos, ...marcasLogos].map((logo, index) => (
                   <div
                     key={`marcas-${index}`}
-                    className="flex-shrink-0 px-4 sm:px-6 md:px-8 flex items-center justify-center"
+                    className="flex-shrink-0 px-4 md:px-8 flex items-center justify-center"
                     style={{ width: '150px', minWidth: '150px' }}
                   >
                     <img
                       src={logo}
                       alt={`Marca ${index + 1}`}
-                      className="h-10 sm:h-12 md:h-16 w-auto object-contain max-w-full"
+                      className="h-10 md:h-16 w-auto object-contain max-w-full"
                       loading="lazy"
                       onError={(e) => {
                         const target = e.target as HTMLImageElement
@@ -555,35 +555,35 @@ const LandingClimargentina = () => {
       {/* Nosotros Section */}
       <section
         id="nosotros"
-        className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-clima-blue/5 via-clima-white to-clima-blue/10"
+        className="py-12 md:py-20 bg-gradient-to-br from-clima-blue/5 via-clima-white to-clima-blue/10"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-clima-blue mb-3 sm:mb-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl md:text-4xl font-bold text-clima-blue mb-3 md:mb-4">
               Nosotros
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">
+            <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2 md:px-0">
               Especialistas en climatización industrial.
             </p>
           </div>
 
           {/* Contenido principal */}
-          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-6 md:gap-8 max-w-6xl mx-auto">
             {/* Card de texto */}
-            <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-12 hover-lift animate-fade-in-up">
-              <div className="space-y-4 sm:space-y-6">
-                <p className="text-gray-700 leading-relaxed text-base sm:text-lg md:text-xl text-center">
+            <div className="bg-white rounded-xl shadow-lg p-6 md:p-12 hover-lift animate-fade-in-up">
+              <div className="space-y-4 md:space-y-6">
+                <p className="text-gray-700 leading-relaxed text-base md:text-xl text-center">
                   En <span className="font-bold text-clima-blue">Climargentina</span> nos especializamos en soluciones de climatización industrial para empresas y espacios productivos. Acompañamos a nuestros clientes con experiencia, asesoramiento técnico y respuestas eficientes.
                 </p>
-                <p className="text-gray-700 leading-relaxed text-base sm:text-lg md:text-xl text-center">
+                <p className="text-gray-700 leading-relaxed text-base md:text-xl text-center">
                   Nuestro equipo de técnicos capacitados trabaja con equipamiento de última generación para garantizar diagnósticos precisos, instalaciones seguras y mantenimientos efectivos. Nos comprometemos con un servicio de calidad y resultados confiables.
                 </p>
               </div>
             </div>
 
             {/* Imagen */}
-            <div className="bg-white rounded-xl shadow-lg p-3 sm:p-4 md:p-6 hover-lift animate-fade-in-up overflow-hidden">
-              <div className="relative w-full h-full min-h-[250px] sm:min-h-[300px] md:min-h-[400px] rounded-lg overflow-hidden">
+            <div className="bg-white rounded-xl shadow-lg p-3 md:p-6 hover-lift animate-fade-in-up overflow-hidden">
+              <div className="relative w-full h-full min-h-[250px] md:min-h-[400px] rounded-lg overflow-hidden">
                 <img
                   src="/images/industrial.jpg"
                   alt="Climatización Industrial"
@@ -602,22 +602,22 @@ const LandingClimargentina = () => {
       {/* Servicios Section */}
       <section
         id="servicios"
-        className="py-12 sm:py-16 md:py-20 bg-clima-white"
+        className="py-12 md:py-20 bg-clima-white"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-10 sm:mb-12 md:mb-16">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-clima-blue mb-3 sm:mb-4">
+          <div className="text-center mb-10 md:mb-16">
+            <h2 className="text-2xl md:text-4xl font-bold text-clima-blue mb-3 md:mb-4">
               Nuestros Servicios
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">
+            <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto px-2 md:px-0">
               Soluciones completas. 
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8">
             {/* Servicio 1 */}
             <div className="bg-white rounded-xl shadow-lg hover-lift overflow-hidden animate-fade-in-up" style={{ animationDelay: '0.1s', opacity: 0 }}>
-              <div className="relative h-40 sm:h-44 md:h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
+              <div className="relative h-40 md:h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
                 <img
                   src="/images/servicio1.avif"
                   alt="Climatización Industrial"
@@ -628,11 +628,11 @@ const LandingClimargentina = () => {
                   }}
                 />
               </div>
-              <div className="p-4 sm:p-5 md:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-clima-blue mb-2 sm:mb-3">
+              <div className="p-4 md:p-6">
+                <h3 className="text-lg md:text-xl font-bold text-clima-blue mb-2 md:mb-3">
                   Climatización Industrial
                 </h3>
-                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
                   Soluciones industriales pensadas para eficiencia energética y continuidad operativa.
                   Especialistas en sistemas HVAC para empresas y espacios industriales.
                 </p>
@@ -641,7 +641,7 @@ const LandingClimargentina = () => {
 
             {/* Servicio 2 */}
             <div className="bg-white rounded-xl shadow-lg hover-lift overflow-hidden animate-fade-in-up" style={{ animationDelay: '0.2s', opacity: 0 }}>
-              <div className="relative h-40 sm:h-44 md:h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
+              <div className="relative h-40 md:h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
                 <img
                   src="/images/servicio2.jpg"
                   alt="Mantenimiento Industrial"
@@ -652,11 +652,11 @@ const LandingClimargentina = () => {
                   }}
                 />
               </div>
-              <div className="p-4 sm:p-5 md:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-clima-blue mb-2 sm:mb-3">
+              <div className="p-4 md:p-6">
+                <h3 className="text-lg md:text-xl font-bold text-clima-blue mb-2 md:mb-3">
                   Mantenimiento Industrial Preventivo y Correctivo
                 </h3>
-                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
                   Planes preventivos y correctivos para evitar paradas y extender la vida útil del sistema.
                   Mantenimiento profesional para empresas con contratos anuales o abonos mensuales.
                 </p>
@@ -665,7 +665,7 @@ const LandingClimargentina = () => {
 
             {/* Servicio 3 */}
             <div className="bg-white rounded-xl shadow-lg hover-lift overflow-hidden animate-fade-in-up" style={{ animationDelay: '0.3s', opacity: 0 }}>
-              <div className="relative h-40 sm:h-44 md:h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
+              <div className="relative h-40 md:h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
                 <img
                   src="/images/servicio3.webp"
                   alt="Venta de Equipos"
@@ -676,11 +676,11 @@ const LandingClimargentina = () => {
                   }}
                 />
               </div>
-              <div className="p-4 sm:p-5 md:p-6">
-                <h3 className="text-lg sm:text-xl font-bold text-clima-blue mb-2 sm:mb-3">
+              <div className="p-4 md:p-6">
+                <h3 className="text-lg md:text-xl font-bold text-clima-blue mb-2 md:mb-3">
                   Venta de Equipos de Aire Acondicionado
                 </h3>
-                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                <p className="text-sm md:text-base text-gray-600 leading-relaxed">
                   Asesoramiento, provisión e instalación de equipos para industria y comercios,
                   con selección según capacidad, consumo y necesidad del ambiente.
                 </p>
@@ -693,31 +693,31 @@ const LandingClimargentina = () => {
       {/* Contacto Section */}
       <section
         id="contacto"
-        className="py-12 sm:py-16 md:py-20 bg-clima-white"
+        className="py-12 md:py-20 bg-clima-white"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-8 sm:mb-10 md:mb-12">
-            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-clima-blue mb-3 sm:mb-4">
+          <div className="text-center mb-8 md:mb-12">
+            <h2 className="text-2xl md:text-4xl font-bold text-clima-blue mb-3 md:mb-4">
               Contacto
             </h2>
-            <p className="text-base sm:text-lg text-gray-600 px-2">
+            <p className="text-base md:text-lg text-gray-600 px-2 md:px-0">
               Elegí la forma que prefieras para comunicarte con nosotros
             </p>
           </div>
 
           <div className="max-w-4xl mx-auto">
             {/* Botones de Contacto */}
-            <div className="grid md:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-10 md:mb-12">
+            <div className="grid md:grid-cols-2 gap-4 md:gap-6 mb-8 md:mb-12">
               {/* Botón WhatsApp */}
               <a
                 href="https://wa.me/541151160924?text=Hola!%20Quiero%20consultar%20por%20sus%20servicios."
                 target="_blank"
                 rel="noopener noreferrer"
-                className="bg-[#25D366] hover:bg-[#20BA5A] text-white rounded-xl shadow-lg p-4 sm:p-5 md:p-6 flex items-center justify-center gap-3 sm:gap-4 transition-all duration-300 transform hover:scale-105 hover:shadow-xl group"
+                className="bg-[#25D366] hover:bg-[#20BA5A] text-white rounded-xl shadow-lg p-4 md:p-6 flex items-center justify-center gap-3 md:gap-4 transition-all duration-300 transform hover:scale-105 hover:shadow-xl group"
               >
-                <div className="bg-white/20 rounded-full p-2 sm:p-2.5 md:p-3 group-hover:bg-white/30 transition-colors flex-shrink-0">
+                <div className="bg-white/20 rounded-full p-2 md:p-3 group-hover:bg-white/30 transition-colors flex-shrink-0">
                   <svg
-                    className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"
+                    className="w-6 h-6 md:w-8 md:h-8"
                     fill="currentColor"
                     viewBox="0 0 24 24"
                   >
@@ -725,19 +725,19 @@ const LandingClimargentina = () => {
                   </svg>
                 </div>
                 <div className="text-left">
-                  <h3 className="text-lg sm:text-xl font-bold mb-0.5 sm:mb-1">WhatsApp</h3>
-                  <p className="text-white/90 text-xs sm:text-sm">011-51160924</p>
+                  <h3 className="text-lg md:text-xl font-bold mb-0.5 md:mb-1">WhatsApp</h3>
+                  <p className="text-white/90 text-xs md:text-sm">011-51160924</p>
                 </div>
               </a>
 
               {/* Botón Email */}
               <a
                 href="mailto:contacto@climargentina.com.ar?subject=Consulta%20-%20Climargentina"
-                className="bg-clima-blue hover:bg-clima-blue/90 text-white rounded-xl shadow-lg p-4 sm:p-5 md:p-6 flex items-center justify-center gap-3 sm:gap-4 transition-all duration-300 transform hover:scale-105 hover:shadow-xl group"
+                className="bg-clima-blue hover:bg-clima-blue/90 text-white rounded-xl shadow-lg p-4 md:p-6 flex items-center justify-center gap-3 md:gap-4 transition-all duration-300 transform hover:scale-105 hover:shadow-xl group"
               >
-                <div className="bg-white/20 rounded-full p-2 sm:p-2.5 md:p-3 group-hover:bg-white/30 transition-colors flex-shrink-0">
+                <div className="bg-white/20 rounded-full p-2 md:p-3 group-hover:bg-white/30 transition-colors flex-shrink-0">
                   <svg
-                    className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"
+                    className="w-6 h-6 md:w-8 md:h-8"
                     fill="none"
                     stroke="currentColor"
                     viewBox="0 0 24 24"
@@ -751,27 +751,27 @@ const LandingClimargentina = () => {
                   </svg>
                 </div>
                 <div className="text-left">
-                  <h3 className="text-lg sm:text-xl font-bold mb-0.5 sm:mb-1">Email</h3>
-                  <p className="text-white/90 text-xs sm:text-sm break-all">contacto@climargentina.com.ar</p>
+                  <h3 className="text-lg md:text-xl font-bold mb-0.5 md:mb-1">Email</h3>
+                  <p className="text-white/90 text-xs md:text-sm break-all">contacto@climargentina.com.ar</p>
                 </div>
               </a>
             </div>
 
             {/* Información Adicional */}
-            <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
+            <div className="grid md:grid-cols-2 gap-4 md:gap-6">
               <div className="flex items-start">
-                <span className="text-xl sm:text-2xl mr-2 sm:mr-3 mt-0.5 sm:mt-1 flex-shrink-0" role="img" aria-label="Bandera Argentina">
+                <span className="text-xl md:text-2xl mr-2 md:mr-3 mt-0.5 md:mt-1 flex-shrink-0" role="img" aria-label="Bandera Argentina">
                   🇦🇷
                 </span>
                 <div>
-                  <p className="font-semibold text-sm sm:text-base text-clima-blue mb-0.5 sm:mb-1">Ubicación</p>
-                  <p className="text-sm sm:text-base text-gray-700">Buenos Aires, Argentina</p>
+                  <p className="font-semibold text-sm md:text-base text-clima-blue mb-0.5 md:mb-1">Ubicación</p>
+                  <p className="text-sm md:text-base text-gray-700">Buenos Aires, Argentina</p>
                 </div>
               </div>
 
               <div className="flex items-start">
                 <svg
-                  className="w-5 h-5 sm:w-6 sm:h-6 text-clima-red mr-2 sm:mr-3 mt-0.5 sm:mt-1 flex-shrink-0"
+                  className="w-5 h-5 md:w-6 md:h-6 text-clima-red mr-2 md:mr-3 mt-0.5 md:mt-1 flex-shrink-0"
                   fill="none"
                   stroke="currentColor"
                   viewBox="0 0 24 24"
@@ -784,9 +784,9 @@ const LandingClimargentina = () => {
                   />
                 </svg>
                 <div>
-                  <p className="font-semibold text-sm sm:text-base text-clima-blue mb-0.5 sm:mb-1">Horarios</p>
-                  <p className="text-sm sm:text-base text-gray-700">Lunes a Viernes: 8:00 - 17:00</p>
-                  <p className="text-sm sm:text-base text-gray-700">Sábados: 8:00 - 13:00</p>
+                  <p className="font-semibold text-sm md:text-base text-clima-blue mb-0.5 md:mb-1">Horarios</p>
+                  <p className="text-sm md:text-base text-gray-700">Lunes a Viernes: 8:00 - 17:00</p>
+                  <p className="text-sm md:text-base text-gray-700">Sábados: 8:00 - 13:00</p>
                 </div>
               </div>
             </div>
@@ -795,18 +795,18 @@ const LandingClimargentina = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-clima-blue text-clima-white py-8 sm:py-10 md:py-12">
+      <footer className="bg-clima-blue text-clima-white py-8 md:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
+          <div className="grid md:grid-cols-3 gap-6 md:gap-8 mb-6 md:mb-8">
             <div>
-              <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Climargentina</h3>
-              <p className="text-sm sm:text-base text-clima-white/80">
+              <h3 className="text-lg md:text-xl font-bold mb-3 md:mb-4">Climargentina</h3>
+              <p className="text-sm md:text-base text-clima-white/80">
                 Climatización industrial de confianza.
               </p>
             </div>
             <div>
-              <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Enlaces rápidos</h4>
-              <ul className="space-y-1.5 sm:space-y-2">
+              <h4 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Enlaces rápidos</h4>
+              <ul className="space-y-1.5 md:space-y-2">
                 <li>
                   <button
                     onClick={() => handleScrollTo('inicio')}
@@ -842,8 +842,8 @@ const LandingClimargentina = () => {
               </ul>
             </div>
             <div>
-              <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Seguinos</h4>
-              <div className="flex space-x-3 sm:space-x-4">
+              <h4 className="text-base md:text-lg font-semibold mb-3 md:mb-4">Seguinos</h4>
+              <div className="flex space-x-3 md:space-x-4">
                 <a
                   href="#"
                   className="text-clima-white/80 hover:text-clima-white transition-colors"
@@ -874,8 +874,8 @@ const LandingClimargentina = () => {
               </div>
             </div>
           </div>
-          <div className="border-t border-clima-white/20 pt-6 sm:pt-8 text-center text-clima-white/80">
-            <p className="text-xs sm:text-sm px-2">
+          <div className="border-t border-clima-white/20 pt-6 md:pt-8 text-center text-clima-white/80">
+            <p className="text-xs md:text-sm px-2">
               &copy; {new Date().getFullYear()} Climargentina. Todos los derechos reservados. - Creado por:{' '}
               <a
                 href="https://www.excalicode.com.ar"
@@ -895,12 +895,12 @@ const LandingClimargentina = () => {
         href="https://wa.me/541151160924"
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 bg-[#25D366] hover:bg-[#20BA5A] text-white rounded-full p-3 sm:p-4 shadow-2xl hover:shadow-[#25D366]/50 transition-all duration-300 transform hover:scale-110 touch-manipulation"
+        className="fixed bottom-4 right-4 md:bottom-6 md:right-6 z-50 bg-[#25D366] hover:bg-[#20BA5A] text-white rounded-full p-3 md:p-4 shadow-2xl hover:shadow-[#25D366]/50 transition-all duration-300 transform hover:scale-110 touch-manipulation"
         aria-label="Contactar por WhatsApp"
         title="Contactar por WhatsApp"
       >
         <svg
-          className="w-5 h-5 sm:w-6 sm:h-6"
+          className="w-5 h-5 md:w-6 md:h-6"
           fill="currentColor"
           viewBox="0 0 24 24"
         >

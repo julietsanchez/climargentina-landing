@@ -358,14 +358,14 @@ body {
   animation-play-state: paused;
 }
 
-/* Optimización para móviles */
+/* Optimización para móviles - Carruseles más rápidos */
 @media (max-width: 768px) {
   .carousel-infinite-left {
-    animation-duration: 20s;
+    animation-duration: 12s;
   }
   
   .carousel-infinite-right {
-    animation-duration: 20s;
+    animation-duration: 12s;
   }
 }
 
