@@ -201,3 +201,171 @@ body {
   animation: shimmer 3s linear infinite;
 }
 
+/* Animaciones modernas para carrusel - Optimizadas para mobile */
+@keyframes slideInFromRight {
+  0% {
+    opacity: 0;
+    transform: translateX(30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideOutToLeft {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.95);
+  }
+}
+
+@keyframes slideInFromLeft {
+  0% {
+    opacity: 0;
+    transform: translateX(-30px) scale(0.95);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+@keyframes slideOutToRight {
+  0% {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+  100% {
+    opacity: 0;
+    transform: translateX(30px) scale(0.95);
+  }
+}
+
+/* Clases para transiciones del carrusel - Optimizadas para GPU */
+.slide-enter-right {
+  animation: slideInFromRight 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  will-change: transform, opacity;
+}
+
+.slide-exit-left {
+  animation: slideOutToLeft 0.6s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+  will-change: transform, opacity;
+}
+
+.slide-enter-left {
+  animation: slideInFromLeft 0.7s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  will-change: transform, opacity;
+}
+
+.slide-exit-right {
+  animation: slideOutToRight 0.6s cubic-bezier(0.55, 0.06, 0.68, 0.19) forwards;
+  will-change: transform, opacity;
+}
+
+.slide-active {
+  opacity: 1;
+  transform: translateX(0) scale(1);
+  will-change: auto;
+}
+
+.slide-inactive {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Versión mobile optimizada - menos transformaciones para mejor rendimiento */
+@media (max-width: 768px) {
+  @keyframes slideInFromRight {
+    0% {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutToLeft {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+  }
+
+  @keyframes slideInFromLeft {
+    0% {
+      opacity: 0;
+      transform: translateX(-20px);
+    }
+    100% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+  }
+
+  @keyframes slideOutToRight {
+    0% {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    100% {
+      opacity: 0;
+      transform: translateX(20px);
+    }
+  }
+
+  .slide-enter-right,
+  .slide-exit-left,
+  .slide-enter-left,
+  .slide-exit-right {
+    animation-duration: 0.5s;
+    will-change: transform, opacity;
+  }
+}
+
+/* Animaciones para carruseles infinitos de logos */
+@keyframes scroll-left {
+  0% {
+    transform: translateX(0);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.carousel-infinite-left {
+  animation: scroll-left 30s linear infinite;
+  will-change: transform;
+}
+
+.carousel-infinite-right {
+  animation: scroll-left 30s linear infinite reverse;
+  will-change: transform;
+}
+
+.carousel-infinite-left:hover,
+.carousel-infinite-right:hover {
+  animation-play-state: paused;
+}
+
+/* Optimización para móviles */
+@media (max-width: 768px) {
+  .carousel-infinite-left {
+    animation-duration: 20s;
+  }
+  
+  .carousel-infinite-right {
+    animation-duration: 20s;
+  }
+}
+

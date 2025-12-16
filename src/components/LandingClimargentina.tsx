@@ -1,8 +1,73 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
+
+interface Slide {
+  label: string
+  title: string
+  subtitle: string
+  whatsappUrl: string
+  imageUrl: string
+}
 
 const LandingClimargentina = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+
+  // Estados del carrusel
+  const [currentSlide, setCurrentSlide] = useState(0)
+  const [slideDirection, setSlideDirection] = useState<'next' | 'prev'>('next')
+  const [isTransitioning, setIsTransitioning] = useState(false)
+  const prevSlideRef = useRef<number>(0)
+  const touchStartX = useRef<number | null>(null)
+  const touchEndX = useRef<number | null>(null)
+  const autoplayIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+
+  // Arrays de logos para carruseles
+  const clientesLogos = [
+    '/clientes/logo1.png',
+    '/clientes/logo2.png',
+    '/clientes/logo3.png',
+    '/clientes/logo4.png',
+    '/clientes/logo5.png',
+    '/clientes/logo 5.png',
+    '/clientes/logo6.png',
+  ]
+
+  const marcasLogos = [
+    '/marcas/bgh.png',
+    '/marcas/carrier.png',
+    '/marcas/LG.png',
+    '/marcas/midea.svg',
+    '/marcas/phillips.png',
+    '/marcas/samsung.png',
+    '/marcas/surrey.png',
+    '/marcas/trane.png',
+    '/marcas/york.png',
+  ]
+
+  // Array de slides con URLs de imágenes de stock (libre uso)
+  const slides: Slide[] = [
+    {
+      label: 'ESPECIALISTAS EN Climatización Industrial',
+      title: 'Somos expertos en Climatización Industrial',
+      subtitle: 'Soluciones industriales pensadas para eficiencia energética y continuidad operativa.',
+      whatsappUrl: 'https://wa.me/541151160924?text=Hola!%20Quiero%20consultar%20por%20climatizaci%C3%B3n%20industrial.%20%C2%BFPodr%C3%ADan%20asesorarme%20con%20una%20soluci%C3%B3n%20HVAC%20para%20mi%20empresa%3F',
+      imageUrl: '/images/hero.png'
+    },
+    {
+      label: 'MANTENIMIENTO INDUSTRIAL PREVENTIVO Y CORRECTIVO',
+      title: 'Mantenimiento industrial para empresas',
+      subtitle: 'Planes preventivos y correctivos para evitar paradas y extender la vida útil del sistema.',
+      whatsappUrl: 'https://wa.me/541151160924?text=Hola!%20Quiero%20consultar%20por%20mantenimiento%20preventivo%20y%20correctivo%20para%20empresa.%20%C2%BFTrabajan%20con%20contratos%20anuales%20o%20abonos%20mensuales%3F',
+      imageUrl: '/images/slide2.png'
+    },
+    {
+      label: 'VENTA DE EQUIPOS DE AIRE ACONDICIONADO',
+      title: 'Venta de equipos de aire acondicionado',
+      subtitle: 'Asesoramiento, provisión e instalación de equipos para industria y comercios, con selección según capacidad, consumo y necesidad del ambiente.',
+      imageUrl: '/images/slide3.png',
+      whatsappUrl: 'https://wa.me/541151160924?text=Hola!%20Quiero%20consultar%20por%20venta%20de%20equipos%20de%20aire%20acondicionado.%20%C2%BFMe%20pueden%20cotizar%20seg%C3%BAn%20la%20necesidad%20de%20mi%20espacio%3F'
+    }
+  ]
 
   useEffect(() => {
     const handleScroll = () => {
@@ -13,14 +78,111 @@ const LandingClimargentina = () => {
     window.addEventListener('scroll', handleScroll)
     return () => window.removeEventListener('scroll', handleScroll)
   }, [])
-  const [formData, setFormData] = useState({
-    nombre: '',
-    email: '',
-    telefono: '',
-    servicio: '',
-    mensaje: '',
-  })
-  const [formSubmitted, setFormSubmitted] = useState(false)
+
+  // Navegación del carrusel
+  const nextSlide = useCallback(() => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    setSlideDirection('next')
+    setCurrentSlide((prev) => {
+      prevSlideRef.current = prev
+      const next = (prev + 1) % slides.length
+      return next
+    })
+    setTimeout(() => setIsTransitioning(false), 600)
+  }, [slides.length, isTransitioning])
+
+  const prevSlide = useCallback(() => {
+    if (isTransitioning) return
+    setIsTransitioning(true)
+    setSlideDirection('prev')
+    setCurrentSlide((prev) => {
+      prevSlideRef.current = prev
+      const prevIndex = (prev - 1 + slides.length) % slides.length
+      return prevIndex
+    })
+    setTimeout(() => setIsTransitioning(false), 600)
+  }, [slides.length, isTransitioning])
+
+  const goToSlide = (index: number) => {
+    if (index >= 0 && index < slides.length && !isTransitioning) {
+      setIsTransitioning(true)
+      prevSlideRef.current = currentSlide
+      setSlideDirection(index > currentSlide ? 'next' : 'prev')
+      setCurrentSlide(index)
+      setTimeout(() => setIsTransitioning(false), 600)
+    }
+  }
+
+  // Pausa y reanudación del autoplay al hover
+  const pauseAutoplay = useCallback(() => {
+    if (autoplayIntervalRef.current) {
+      clearInterval(autoplayIntervalRef.current)
+      autoplayIntervalRef.current = null
+    }
+  }, [])
+
+  const resumeAutoplay = useCallback(() => {
+    if (!autoplayIntervalRef.current) {
+      autoplayIntervalRef.current = setInterval(() => {
+        nextSlide()
+      }, 4000)
+    }
+  }, [nextSlide])
+
+  // Lógica del carrusel - Autoplay infinito
+  useEffect(() => {
+    resumeAutoplay()
+    return () => {
+      if (autoplayIntervalRef.current) {
+        clearInterval(autoplayIntervalRef.current)
+      }
+    }
+  }, [resumeAutoplay])
+
+  // Touch handlers para swipe en mobile
+  const handleTouchStart = (e: React.TouchEvent) => {
+    touchStartX.current = e.touches[0].clientX
+  }
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    touchEndX.current = e.touches[0].clientX
+  }
+
+  const handleTouchEnd = () => {
+    if (!touchStartX.current || !touchEndX.current) return
+
+    const distance = touchStartX.current - touchEndX.current
+    const minSwipeDistance = 50
+
+    if (distance > minSwipeDistance) {
+      nextSlide()
+    } else if (distance < -minSwipeDistance) {
+      prevSlide()
+    }
+
+    touchStartX.current = null
+    touchEndX.current = null
+  }
+
+  // Manejo de CTAs
+  const handleCTAClick = (whatsappUrl: string) => {
+    window.open(whatsappUrl, '_blank', 'noopener,noreferrer')
+  }
+
+  // Navegación por teclado
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'ArrowLeft') {
+        prevSlide()
+      } else if (e.key === 'ArrowRight') {
+        nextSlide()
+      }
+    }
+
+    window.addEventListener('keydown', handleKeyDown)
+    return () => window.removeEventListener('keydown', handleKeyDown)
+  }, [prevSlide, nextSlide])
 
   const handleScrollTo = (id: string) => {
     const element = document.getElementById(id)
@@ -30,28 +192,6 @@ const LandingClimargentina = () => {
     }
   }
 
-  const handleInputChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
-  ) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({ ...prev, [name]: value }))
-  }
-
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    // Aquí iría la lógica de envío al backend
-    console.log('Formulario enviado:', formData)
-    setFormSubmitted(true)
-    setFormData({
-      nombre: '',
-      email: '',
-      telefono: '',
-      servicio: '',
-      mensaje: '',
-    })
-    setTimeout(() => setFormSubmitted(false), 5000)
-  }
-
   return (
     <div className="min-h-screen bg-clima-white overflow-x-hidden">
       {/* Navbar Fija */}
@@ -59,13 +199,13 @@ const LandingClimargentina = () => {
         scrolled ? 'shadow-xl backdrop-blur-sm bg-clima-white/95' : 'shadow-md'
       }`}>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-20">
+          <div className="flex justify-between items-center h-16 sm:h-20">
             {/* Logo */}
             <div className="flex-shrink-0">
               <img
                 src="/logo-climargentina.svg"
                 alt="Climargentina Logo"
-                className="h-12 w-auto object-contain"
+                className="h-8 sm:h-10 md:h-12 w-auto object-contain"
               />
             </div>
 
@@ -123,28 +263,28 @@ const LandingClimargentina = () => {
 
           {/* Menú Móvil Desplegable */}
           {isMenuOpen && (
-            <div className="md:hidden pb-4 space-y-2">
+            <div className="md:hidden pb-4 space-y-1.5 sm:space-y-2">
               <button
                 onClick={() => handleScrollTo('inicio')}
-                className="block w-full text-left px-4 py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium"
+                className="block w-full text-left px-4 py-2.5 sm:py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium text-sm sm:text-base touch-manipulation"
               >
                 Inicio
               </button>
               <button
                 onClick={() => handleScrollTo('nosotros')}
-                className="block w-full text-left px-4 py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium"
+                className="block w-full text-left px-4 py-2.5 sm:py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium text-sm sm:text-base touch-manipulation"
               >
                 Nosotros
               </button>
               <button
                 onClick={() => handleScrollTo('servicios')}
-                className="block w-full text-left px-4 py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium"
+                className="block w-full text-left px-4 py-2.5 sm:py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium text-sm sm:text-base touch-manipulation"
               >
                 Servicios
               </button>
               <button
                 onClick={() => handleScrollTo('contacto')}
-                className="block w-full text-left px-4 py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium"
+                className="block w-full text-left px-4 py-2.5 sm:py-2 text-clima-blue hover:bg-gray-100 rounded transition-colors uppercase font-medium text-sm sm:text-base touch-manipulation"
               >
                 Contacto
               </button>
@@ -153,80 +293,189 @@ const LandingClimargentina = () => {
         </div>
       </nav>
 
-      {/* Hero Section */}
+      {/* Hero Section - Carrusel */}
       <section
         id="inicio"
         className="relative min-h-screen flex items-center justify-center overflow-hidden bg-gradient-to-br from-clima-blue via-clima-blue/90 to-clima-blue/80 pt-20"
+        role="region"
+        aria-label="Carrusel de servicios de Climatización Industrial"
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        onMouseEnter={pauseAutoplay}
+        onMouseLeave={resumeAutoplay}
       >
-        {/* Imagen de fondo con overlay */}
-        <div className="absolute inset-0 z-0">
-          <img
-            src="/images/hero.png"
-            alt="Aire acondicionado automotriz"
-            className="w-full h-full object-cover animate-fade-in"
-            onError={(e) => {
-              const target = e.target as HTMLImageElement
-              target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"%3E%3Crect fill="%231c457f" width="1920" height="1080"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="24" fill="%23ffffff" text-anchor="middle" dominant-baseline="middle"%3EAire Acondicionado Automotriz%3C/text%3E%3C/svg%3E'
-            }}
-          />
-          <div className="absolute inset-0 bg-gradient-to-r from-clima-blue/70 via-clima-blue/60 to-clima-blue/50"></div>
-          {/* Efecto de ondas de refrigeración */}
-          <div className="refrigeration-waves"></div>
-        </div>
+        {/* Contenedor del carrusel */}
+        <div className="relative w-full h-full">
+          {/* Slides */}
+          <div className="relative w-full h-screen overflow-hidden">
+            {slides.map((slide, index) => {
+              const isActive = index === currentSlide
+              const isPreviousSlide = index === prevSlideRef.current && !isActive
+              
+              // Determinar la clase de animación según el estado y dirección
+              let animationClass = 'slide-inactive'
+              if (isActive) {
+                animationClass = slideDirection === 'next' ? 'slide-enter-right' : 'slide-enter-left'
+              } else if (isPreviousSlide && isTransitioning) {
+                animationClass = slideDirection === 'next' ? 'slide-exit-left' : 'slide-exit-right'
+              }
+              
+              return (
+              <div
+                key={index}
+                className={`absolute inset-0 ${animationClass}`}
+                style={{ 
+                  zIndex: isActive ? 10 : isPreviousSlide && isTransitioning ? 5 : index,
+                  pointerEvents: isActive ? 'auto' : 'none'
+                }}
+              >
+                {/* Imagen de fondo */}
+                <div className="absolute inset-0 z-0">
+                  <img
+                    src={slide.imageUrl}
+                    alt={slide.title}
+                    className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement
+                      target.src = `data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="1920" height="1080"%3E%3Crect fill="%231c457f" width="1920" height="1080"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="24" fill="%23ffffff" text-anchor="middle" dominant-baseline="middle"%3E${encodeURIComponent(slide.title)}%3C/text%3E%3C/svg%3E`
+                    }}
+                    loading={index === 0 ? 'eager' : 'lazy'}
+                  />
+                  {/* Overlay oscuro/azulado para legibilidad */}
+                  <div className="absolute inset-0 bg-gradient-to-r from-clima-blue/80 via-clima-blue/70 to-clima-blue/60"></div>
+                </div>
 
-        {/* Partículas de frío decorativas */}
-        <div className="cold-particles absolute inset-0 z-5 overflow-hidden">
-          {[...Array(12)].map((_, i) => (
-            <div
-              key={i}
-              className="cold-particle"
-              style={{
-                left: `${Math.random() * 100}%`,
-                animationDelay: `${Math.random() * 15}s`,
-                animationDuration: `${10 + Math.random() * 10}s`,
-              }}
-            />
-          ))}
-        </div>
+                {/* Contenido del slide */}
+                {index === currentSlide && (
+                  <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full h-full flex items-center justify-center">
+                    <div className="flex flex-col items-center justify-center text-center w-full">
+                      <div className="space-y-3 sm:space-y-4 md:space-y-6 max-w-4xl animate-fade-in-up px-2 sm:px-0">
+                        {/* Título */}
+                        <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl xl:text-7xl font-bold text-clima-white leading-tight drop-shadow-2xl">
+                          {index === 0 ? (
+                            <>
+                              Somos expertos en{' '}
+                              <span className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 gradient-shimmer text-clima-white rounded-lg inline-block text-base sm:text-inherit">
+                                Climatización Industrial
+                              </span>
+                            </>
+                          ) : index === 1 ? (
+                            <>
+                              Mantenimiento industrial para{' '}
+                              <span className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 gradient-shimmer text-clima-white rounded-lg inline-block text-base sm:text-inherit">
+                                Empresas
+                              </span>
+                            </>
+                          ) : (
+                            <>
+                              Venta de equipos de{' '}
+                              <span className="px-2 sm:px-3 md:px-4 py-1 sm:py-2 gradient-shimmer text-clima-white rounded-lg inline-block text-base sm:text-inherit">
+                                Aire Acondicionado
+                              </span>
+                            </>
+                          )}
+                        </h1>
 
-        {/* Contenido del Hero */}
-        <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full py-12">
-          <div className="flex flex-col items-center justify-center text-center">
-            <div className="space-y-6 sm:space-y-8 max-w-4xl">
-              <div className="space-y-6 animate-fade-in-up">
-                <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-clima-white leading-tight drop-shadow-2xl">
-                  Climatización automotriz e industrial de confianza
-                </h1>
-                <p className="text-xl md:text-2xl text-clima-white/95 leading-relaxed max-w-3xl mx-auto drop-shadow-lg">
-                  Especialistas en aire acondicionado automotriz, sistemas industriales y lubricentro.
-                  Soluciones integrales con técnicos certificados y equipamiento de última generación.
-                </p>
+                        {/* Subtítulo */}
+                        <p className="text-sm sm:text-lg md:text-xl lg:text-2xl text-clima-white/95 leading-relaxed max-w-3xl mx-auto drop-shadow-lg px-2 sm:px-4">
+                          {slide.subtitle}
+                        </p>
+
+                        {/* CTA */}
+                        <div className="pt-2 sm:pt-4 flex justify-center items-center px-2 sm:px-4">
+                          <button
+                            onClick={() => handleCTAClick(slide.whatsappUrl)}
+                            className="flex items-center justify-center gap-2 px-6 sm:px-8 md:px-10 py-2.5 sm:py-3 md:py-4 gradient-shimmer text-clima-white font-bold text-sm sm:text-base md:text-lg rounded-xl shadow-2xl hover:shadow-red-500/50 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-clima-red focus:ring-offset-2 w-full max-w-xs sm:max-w-none sm:w-auto"
+                            aria-label="Consultar por WhatsApp"
+                          >
+                            <svg
+                              className="w-5 h-5 sm:w-6 sm:h-6"
+                              fill="currentColor"
+                              viewBox="0 0 24 24"
+                              aria-hidden="true"
+                            >
+                              <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                            </svg>
+                            Consultar
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
-              <div className="flex flex-col sm:flex-row gap-4 pt-4 justify-center animate-fade-in-up" style={{ animationDelay: '0.3s', opacity: 0 }}>
-                <button
-                  onClick={() => handleScrollTo('contacto')}
-                  className="px-10 py-4 gradient-shimmer text-clima-white font-bold text-lg rounded-xl shadow-2xl hover:shadow-red-500/50 transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-clima-red focus:ring-offset-2"
-                >
-                  Solicitar turno
-                </button>
-                <button
-                  onClick={() => handleScrollTo('servicios')}
-                  className="px-10 py-4 bg-clima-white/10 backdrop-blur-md border-2 border-clima-white/80 text-clima-white font-bold text-lg rounded-xl hover:bg-clima-white hover:text-clima-blue transition-all duration-300 transform hover:scale-110 hover:shadow-2xl focus:outline-none focus:ring-4 focus:ring-clima-white focus:ring-offset-2"
-                >
-                  Ver servicios
-                </button>
-              </div>
-            </div>
+              )
+            })}
+          </div>
+
+          {/* Flechas de navegación */}
+          <button
+            onClick={prevSlide}
+            className="absolute left-2 sm:left-4 md:left-8 top-1/2 -translate-y-1/2 z-20 bg-clima-white/20 backdrop-blur-md hover:bg-clima-white/30 text-clima-white p-2.5 sm:p-3 md:p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-clima-white focus:ring-offset-2 touch-manipulation"
+            aria-label="Slide anterior"
+          >
+            <svg
+              className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+          </button>
+
+          <button
+            onClick={nextSlide}
+            className="absolute right-2 sm:right-4 md:right-8 top-1/2 -translate-y-1/2 z-20 bg-clima-white/20 backdrop-blur-md hover:bg-clima-white/30 text-clima-white p-2.5 sm:p-3 md:p-4 rounded-full shadow-lg transition-all duration-300 transform hover:scale-110 focus:outline-none focus:ring-4 focus:ring-clima-white focus:ring-offset-2 touch-manipulation"
+            aria-label="Slide siguiente"
+          >
+            <svg
+              className="w-5 h-5 sm:w-6 sm:h-6 md:w-8 md:h-8"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2"
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+
+          {/* Dots de navegación */}
+          <div className="absolute bottom-4 sm:bottom-6 md:bottom-8 left-1/2 -translate-x-1/2 z-20 flex gap-1.5 sm:gap-2 md:gap-3">
+            {slides.map((_, index) => (
+              <button
+                key={index}
+                onClick={() => goToSlide(index)}
+                className={`transition-all duration-300 rounded-full focus:outline-none focus:ring-4 focus:ring-clima-white focus:ring-offset-2 touch-manipulation ${
+                  index === currentSlide
+                    ? 'w-6 sm:w-8 md:w-10 h-2.5 sm:h-3 md:h-4 bg-clima-white'
+                    : 'w-2.5 sm:w-3 md:w-4 h-2.5 sm:h-3 md:h-4 bg-clima-white/50 hover:bg-clima-white/75'
+                }`}
+                aria-label={`Ir al slide ${index + 1}`}
+                aria-current={index === currentSlide ? 'true' : 'false'}
+              />
+            ))}
           </div>
         </div>
 
         {/* Indicador de scroll */}
-        <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
+        <div className="absolute bottom-12 sm:bottom-20 md:bottom-24 left-1/2 transform -translate-x-1/2 z-10 animate-bounce">
           <svg
-            className="w-6 h-6 text-clima-white"
+            className="w-5 h-5 sm:w-6 sm:h-6 text-clima-white"
             fill="none"
             stroke="currentColor"
             viewBox="0 0 24 24"
+            aria-hidden="true"
           >
             <path
               strokeLinecap="round"
@@ -238,132 +487,113 @@ const LandingClimargentina = () => {
         </div>
       </section>
 
+      {/* Carruseles de Clientes y Marcas */}
+      <section className="py-12 sm:py-16 bg-clima-white overflow-hidden">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Carrusel de Clientes */}
+          <div className="mb-12 sm:mb-16">
+            <h2 className="text-base sm:text-lg md:text-xl font-medium uppercase tracking-wider text-clima-blue text-center mb-6 sm:mb-8">
+              Nuestros clientes
+            </h2>
+            <div className="relative w-full overflow-hidden">
+              <div className="flex carousel-infinite-left">
+                {/* Duplicar el contenido para efecto infinito */}
+                {[...clientesLogos, ...clientesLogos].map((logo, index) => (
+                  <div
+                    key={`clientes-${index}`}
+                    className="flex-shrink-0 px-4 sm:px-6 md:px-8 flex items-center justify-center"
+                    style={{ width: '150px', minWidth: '150px' }}
+                  >
+                    <img
+                      src={logo}
+                      alt={`Cliente ${index + 1}`}
+                      className="h-10 sm:h-12 md:h-16 w-auto object-contain max-w-full"
+                      loading="lazy"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.style.display = 'none'
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
+          {/* Carrusel de Marcas */}
+          <div>
+            <h2 className="text-base sm:text-lg md:text-xl font-medium uppercase tracking-wider text-clima-blue text-center mb-6 sm:mb-8">
+              Marcas con las que trabajamos
+            </h2>
+            <div className="relative w-full overflow-hidden">
+              <div className="flex carousel-infinite-right">
+                {/* Duplicar el contenido para efecto infinito */}
+                {[...marcasLogos, ...marcasLogos].map((logo, index) => (
+                  <div
+                    key={`marcas-${index}`}
+                    className="flex-shrink-0 px-4 sm:px-6 md:px-8 flex items-center justify-center"
+                    style={{ width: '150px', minWidth: '150px' }}
+                  >
+                    <img
+                      src={logo}
+                      alt={`Marca ${index + 1}`}
+                      className="h-10 sm:h-12 md:h-16 w-auto object-contain max-w-full"
+                      loading="lazy"
+                      onError={(e) => {
+                        const target = e.target as HTMLImageElement
+                        target.style.display = 'none'
+                      }}
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
       {/* Nosotros Section */}
       <section
         id="nosotros"
-        className="py-20 bg-gradient-to-br from-clima-blue/5 via-clima-white to-clima-blue/10"
+        className="py-12 sm:py-16 md:py-20 bg-gradient-to-br from-clima-blue/5 via-clima-white to-clima-blue/10"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-clima-blue mb-4">
+          <div className="text-center mb-8 sm:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-clima-blue mb-3 sm:mb-4">
               Nosotros
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Conoce más sobre nuestra empresa y nuestro compromiso con la excelencia
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">
+              Especialistas en climatización industrial.
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
-            {/* Texto sobre la empresa */}
-            <div className="space-y-6 animate-slide-in-left">
-              <h3 className="text-2xl font-bold text-clima-blue">
-                Especialistas en climatización desde hace años
-              </h3>
-              <p className="text-gray-700 leading-relaxed text-lg">
-                En Climargentina nos especializamos en brindar soluciones integrales de climatización
-                automotriz e industrial, así como servicios de lubricentro. Con años de experiencia
-                en el mercado, nos hemos consolidado como referentes en el sector.
-              </p>
-              <p className="text-gray-700 leading-relaxed text-lg">
-                Nuestro equipo de técnicos altamente capacitados y certificados trabaja con
-                equipamiento de última generación para garantizar diagnósticos precisos y
-                reparaciones eficientes. Nos comprometemos a brindar un servicio de calidad
-                que supere las expectativas de nuestros clientes.
-              </p>
-            </div>
-
-            {/* Imagen o valores */}
-            <div className="relative animate-slide-in-right">
-              <div className="bg-white rounded-xl shadow-lg p-8 hover-lift">
-                <h4 className="text-xl font-bold text-clima-blue mb-6">Nuestros Valores</h4>
-                <div className="space-y-4">
-                  <div className="flex items-start">
-                    <div className="w-12 h-12 bg-clima-red/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                      <svg className="w-6 h-6 text-clima-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h5 className="font-semibold text-clima-blue mb-1">Calidad</h5>
-                      <p className="text-gray-600">Trabajamos con los más altos estándares de calidad en cada servicio.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="w-12 h-12 bg-clima-red/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                      <svg className="w-6 h-6 text-clima-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h5 className="font-semibold text-clima-blue mb-1">Puntualidad</h5>
-                      <p className="text-gray-600">Respetamos los tiempos acordados y valoramos el tiempo de nuestros clientes.</p>
-                    </div>
-                  </div>
-                  <div className="flex items-start">
-                    <div className="w-12 h-12 bg-clima-red/10 rounded-full flex items-center justify-center mr-4 flex-shrink-0">
-                      <svg className="w-6 h-6 text-clima-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
-                      </svg>
-                    </div>
-                    <div>
-                      <h5 className="font-semibold text-clima-blue mb-1">Compromiso</h5>
-                      <p className="text-gray-600">Nos comprometemos con la satisfacción total de cada cliente.</p>
-                    </div>
-                  </div>
-                </div>
+          {/* Contenido principal */}
+          <div className="grid md:grid-cols-2 gap-6 sm:gap-8 max-w-6xl mx-auto">
+            {/* Card de texto */}
+            <div className="bg-white rounded-xl shadow-lg p-6 sm:p-8 md:p-12 hover-lift animate-fade-in-up">
+              <div className="space-y-4 sm:space-y-6">
+                <p className="text-gray-700 leading-relaxed text-base sm:text-lg md:text-xl text-center">
+                  En <span className="font-bold text-clima-blue">Climargentina</span> nos especializamos en soluciones de climatización industrial para empresas y espacios productivos. Acompañamos a nuestros clientes con experiencia, asesoramiento técnico y respuestas eficientes.
+                </p>
+                <p className="text-gray-700 leading-relaxed text-base sm:text-lg md:text-xl text-center">
+                  Nuestro equipo de técnicos capacitados trabaja con equipamiento de última generación para garantizar diagnósticos precisos, instalaciones seguras y mantenimientos efectivos. Nos comprometemos con un servicio de calidad y resultados confiables.
+                </p>
               </div>
             </div>
-          </div>
 
-          {/* Diferenciales */}
-          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <div className="bg-white rounded-xl p-6 shadow-md hover-lift text-center animate-fade-in-up" style={{ animationDelay: '0.1s', opacity: 0 }}>
-              <div className="w-16 h-16 bg-clima-red/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <svg className="w-8 h-8 text-clima-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
+            {/* Imagen */}
+            <div className="bg-white rounded-xl shadow-lg p-3 sm:p-4 md:p-6 hover-lift animate-fade-in-up overflow-hidden">
+              <div className="relative w-full h-full min-h-[250px] sm:min-h-[300px] md:min-h-[400px] rounded-lg overflow-hidden">
+                <img
+                  src="/images/industrial.jpg"
+                  alt="Climatización Industrial"
+                  className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement
+                    target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="600" height="400"%3E%3Crect fill="%23dbeafe" width="600" height="400"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="16" fill="%231c457f" text-anchor="middle" dominant-baseline="middle"%3EClimatizaci%C3%B3n Industrial%3C/text%3E%3C/svg%3E'
+                  }}
+                />
               </div>
-              <h3 className="text-xl font-bold text-clima-blue mb-2">Técnicos Especializados</h3>
-              <p className="text-gray-600">
-                Profesionales certificados con años de experiencia en climatización y mecánica automotriz.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-md hover-lift text-center animate-fade-in-up" style={{ animationDelay: '0.2s', opacity: 0 }}>
-              <div className="w-16 h-16 bg-clima-red/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <svg className="w-8 h-8 text-clima-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-clima-blue mb-2">Equipamiento Moderno</h3>
-              <p className="text-gray-600">
-                Tecnología de última generación para diagnósticos precisos y reparaciones eficientes.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-md hover-lift text-center animate-fade-in-up" style={{ animationDelay: '0.3s', opacity: 0 }}>
-              <div className="w-16 h-16 bg-clima-red/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <svg className="w-8 h-8 text-clima-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-clima-blue mb-2">Atención Rápida</h3>
-              <p className="text-gray-600">
-                Servicio ágil sin comprometer la calidad. Agendamos tu turno en el menor tiempo posible.
-              </p>
-            </div>
-
-            <div className="bg-white rounded-xl p-6 shadow-md hover-lift text-center animate-fade-in-up" style={{ animationDelay: '0.4s', opacity: 0 }}>
-              <div className="w-16 h-16 bg-clima-red/10 rounded-full flex items-center justify-center mb-4 mx-auto">
-                <svg className="w-8 h-8 text-clima-red" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10" />
-                </svg>
-              </div>
-              <h3 className="text-xl font-bold text-clima-blue mb-2">Servicio Integral</h3>
-              <p className="text-gray-600">
-                Climatización y lubricentro en un solo lugar. Soluciones completas para tu vehículo.
-              </p>
             </div>
           </div>
         </div>
@@ -372,87 +602,87 @@ const LandingClimargentina = () => {
       {/* Servicios Section */}
       <section
         id="servicios"
-        className="py-20 bg-clima-white"
+        className="py-12 sm:py-16 md:py-20 bg-clima-white"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-clima-blue mb-4">
+          <div className="text-center mb-10 sm:mb-12 md:mb-16">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-clima-blue mb-3 sm:mb-4">
               Nuestros Servicios
             </h2>
-            <p className="text-lg text-gray-600 max-w-2xl mx-auto">
-              Soluciones completas para climatización y mantenimiento automotriz e industrial
+            <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto px-2">
+              Soluciones completas. 
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-3 gap-6 sm:gap-8">
             {/* Servicio 1 */}
             <div className="bg-white rounded-xl shadow-lg hover-lift overflow-hidden animate-fade-in-up" style={{ animationDelay: '0.1s', opacity: 0 }}>
-              <div className="relative h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
+              <div className="relative h-40 sm:h-44 md:h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
                 <img
-                  src="/images/servicio-automotriz.jpg"
-                  alt="Aire acondicionado automotriz"
+                  src="/images/servicio1.avif"
+                  alt="Climatización Industrial"
                   className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement
-                    target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="200"%3E%3Crect fill="%23dbeafe" width="400" height="200"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="16" fill="%231c457f" text-anchor="middle" dominant-baseline="middle"%3EAire Acondicionado Automotriz%3C/text%3E%3C/svg%3E'
+                    target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="200"%3E%3Crect fill="%23dbeafe" width="400" height="200"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="16" fill="%231c457f" text-anchor="middle" dominant-baseline="middle"%3EClimatizaci%C3%B3n Industrial%3C/text%3E%3C/svg%3E'
                   }}
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-clima-blue mb-3">
-                  Aire Acondicionado Automotriz
+              <div className="p-4 sm:p-5 md:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-clima-blue mb-2 sm:mb-3">
+                  Climatización Industrial
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Diagnóstico, reparación y mantenimiento de sistemas de climatización para
-                  vehículos. Recarga de gas, limpieza de conductos y reparación de compresores.
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                  Soluciones industriales pensadas para eficiencia energética y continuidad operativa.
+                  Especialistas en sistemas HVAC para empresas y espacios industriales.
                 </p>
               </div>
             </div>
 
             {/* Servicio 2 */}
             <div className="bg-white rounded-xl shadow-lg hover-lift overflow-hidden animate-fade-in-up" style={{ animationDelay: '0.2s', opacity: 0 }}>
-              <div className="relative h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
+              <div className="relative h-40 sm:h-44 md:h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
                 <img
-                  src="/images/servicio-industrial.jpg"
-                  alt="Aire acondicionado industrial"
+                  src="/images/servicio2.jpg"
+                  alt="Mantenimiento Industrial"
                   className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement
-                    target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="200"%3E%3Crect fill="%23dbeafe" width="400" height="200"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="16" fill="%231c457f" text-anchor="middle" dominant-baseline="middle"%3EAire Acondicionado Industrial%3C/text%3E%3C/svg%3E'
+                    target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="200"%3E%3Crect fill="%23dbeafe" width="400" height="200"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="16" fill="%231c457f" text-anchor="middle" dominant-baseline="middle"%3EMantenimiento Industrial%3C/text%3E%3C/svg%3E'
                   }}
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-clima-blue mb-3">
-                  Aire Acondicionado Industrial
+              <div className="p-4 sm:p-5 md:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-clima-blue mb-2 sm:mb-3">
+                  Mantenimiento Industrial Preventivo y Correctivo
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Instalación y mantenimiento de sistemas de climatización para empresas,
-                  oficinas y espacios industriales. Soluciones eficientes y personalizadas.
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                  Planes preventivos y correctivos para evitar paradas y extender la vida útil del sistema.
+                  Mantenimiento profesional para empresas con contratos anuales o abonos mensuales.
                 </p>
               </div>
             </div>
 
             {/* Servicio 3 */}
             <div className="bg-white rounded-xl shadow-lg hover-lift overflow-hidden animate-fade-in-up" style={{ animationDelay: '0.3s', opacity: 0 }}>
-              <div className="relative h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
+              <div className="relative h-40 sm:h-44 md:h-48 bg-gradient-to-br from-clima-blue/20 to-clima-blue/5 overflow-hidden">
                 <img
-                  src="/images/servicio-lubricentro.jpg"
-                  alt="Lubricentro"
+                  src="/images/servicio3.webp"
+                  alt="Venta de Equipos"
                   className="w-full h-full object-cover transition-transform duration-500 hover:scale-110"
                   onError={(e) => {
                     const target = e.target as HTMLImageElement
-                    target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="200"%3E%3Crect fill="%23dbeafe" width="400" height="200"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="16" fill="%231c457f" text-anchor="middle" dominant-baseline="middle"%3ELubricentro%3C/text%3E%3C/svg%3E'
+                    target.src = 'data:image/svg+xml,%3Csvg xmlns="http://www.w3.org/2000/svg" width="400" height="200"%3E%3Crect fill="%23dbeafe" width="400" height="200"/%3E%3Ctext x="50%25" y="50%25" font-family="Arial" font-size="16" fill="%231c457f" text-anchor="middle" dominant-baseline="middle"%3EVenta de Equipos%3C/text%3E%3C/svg%3E'
                   }}
                 />
               </div>
-              <div className="p-6">
-                <h3 className="text-xl font-bold text-clima-blue mb-3">
-                  Lubricentro
+              <div className="p-4 sm:p-5 md:p-6">
+                <h3 className="text-lg sm:text-xl font-bold text-clima-blue mb-2 sm:mb-3">
+                  Venta de Equipos de Aire Acondicionado
                 </h3>
-                <p className="text-gray-600 leading-relaxed">
-                  Cambio de aceite, filtros y fluidos. Servicio rápido y profesional para
-                  mantener el motor de tu vehículo en perfecto estado.
+                <p className="text-sm sm:text-base text-gray-600 leading-relaxed">
+                  Asesoramiento, provisión e instalación de equipos para industria y comercios,
+                  con selección según capacidad, consumo y necesidad del ambiente.
                 </p>
               </div>
             </div>
@@ -463,213 +693,100 @@ const LandingClimargentina = () => {
       {/* Contacto Section */}
       <section
         id="contacto"
-        className="py-20 bg-clima-white"
+        className="py-12 sm:py-16 md:py-20 bg-clima-white"
       >
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-12">
-            <h2 className="text-3xl md:text-4xl font-bold text-clima-blue mb-4">
-              Agendá tu turno o pedí tu presupuesto
+          <div className="text-center mb-8 sm:mb-10 md:mb-12">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold text-clima-blue mb-3 sm:mb-4">
+              Contacto
             </h2>
-            <p className="text-lg text-gray-600">
-              Completá el formulario y nos pondremos en contacto contigo a la brevedad
+            <p className="text-base sm:text-lg text-gray-600 px-2">
+              Elegí la forma que prefieras para comunicarte con nosotros
             </p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-12 max-w-5xl mx-auto">
-            {/* Formulario */}
-            <div className="bg-white rounded-xl shadow-lg p-8">
-              {formSubmitted && (
-                <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-lg text-green-800">
-                  ¡Gracias! Tu mensaje fue enviado correctamente. Nos pondremos en contacto pronto.
-                </div>
-              )}
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div>
-                  <label htmlFor="nombre" className="block text-sm font-medium text-gray-700 mb-2">
-                    Nombre completo
-                  </label>
-                  <input
-                    type="text"
-                    id="nombre"
-                    name="nombre"
-                    value={formData.nombre}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-clima-blue focus:border-transparent outline-none transition-all text-gray-700 placeholder-gray-400"
-                    placeholder="Juan Pérez"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
-                    Email
-                  </label>
-                  <input
-                    type="email"
-                    id="email"
-                    name="email"
-                    value={formData.email}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-clima-blue focus:border-transparent outline-none transition-all text-gray-700 placeholder-gray-400"
-                    placeholder="juan@ejemplo.com"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="telefono" className="block text-sm font-medium text-gray-700 mb-2">
-                    Teléfono
-                  </label>
-                  <input
-                    type="tel"
-                    id="telefono"
-                    name="telefono"
-                    value={formData.telefono}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-clima-blue focus:border-transparent outline-none transition-all text-gray-700 placeholder-gray-400"
-                    placeholder="11 1234-5678"
-                  />
-                </div>
-
-                <div>
-                  <label htmlFor="servicio" className="block text-sm font-medium text-gray-700 mb-2">
-                    Tipo de servicio
-                  </label>
-                  <select
-                    id="servicio"
-                    name="servicio"
-                    value={formData.servicio}
-                    onChange={handleInputChange}
-                    required
-                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-clima-blue focus:border-transparent outline-none transition-all bg-white text-gray-700"
+          <div className="max-w-4xl mx-auto">
+            {/* Botones de Contacto */}
+            <div className="grid md:grid-cols-2 gap-4 sm:gap-6 mb-8 sm:mb-10 md:mb-12">
+              {/* Botón WhatsApp */}
+              <a
+                href="https://wa.me/541151160924?text=Hola!%20Quiero%20consultar%20por%20sus%20servicios."
+                target="_blank"
+                rel="noopener noreferrer"
+                className="bg-[#25D366] hover:bg-[#20BA5A] text-white rounded-xl shadow-lg p-4 sm:p-5 md:p-6 flex items-center justify-center gap-3 sm:gap-4 transition-all duration-300 transform hover:scale-105 hover:shadow-xl group"
+              >
+                <div className="bg-white/20 rounded-full p-2 sm:p-2.5 md:p-3 group-hover:bg-white/30 transition-colors flex-shrink-0">
+                  <svg
+                    className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"
+                    fill="currentColor"
+                    viewBox="0 0 24 24"
                   >
-                    <option value="">Seleccionar servicio</option>
-                    <option value="automotriz">Aire acondicionado automotriz</option>
-                    <option value="industrial">Aire acondicionado industrial</option>
-                    <option value="lubricentro">Lubricentro</option>
-                    <option value="otro">Otro</option>
-                  </select>
+                    <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                  </svg>
                 </div>
-
-                <div>
-                  <label htmlFor="mensaje" className="block text-sm font-medium text-gray-700 mb-2">
-                    Mensaje
-                  </label>
-                  <textarea
-                    id="mensaje"
-                    name="mensaje"
-                    value={formData.mensaje}
-                    onChange={handleInputChange}
-                    required
-                    rows={4}
-                    className="w-full px-4 py-3 bg-white border border-gray-300 rounded-lg focus:ring-2 focus:ring-clima-blue focus:border-transparent outline-none transition-all resize-none text-gray-700 placeholder-gray-400"
-                    placeholder="Contanos en qué podemos ayudarte..."
-                  />
+                <div className="text-left">
+                  <h3 className="text-lg sm:text-xl font-bold mb-0.5 sm:mb-1">WhatsApp</h3>
+                  <p className="text-white/90 text-xs sm:text-sm">011-51160924</p>
                 </div>
+              </a>
 
-                <button
-                  type="submit"
-                  className="w-full px-8 py-3 bg-clima-red text-clima-white font-semibold rounded-lg shadow-lg hover:bg-red-700 transition-all duration-200 transform hover:scale-105 focus:outline-none focus:ring-2 focus:ring-clima-red focus:ring-offset-2"
-                >
-                  Enviar consulta
-                </button>
-              </form>
+              {/* Botón Email */}
+              <a
+                href="mailto:contacto@climargentina.com.ar?subject=Consulta%20-%20Climargentina"
+                className="bg-clima-blue hover:bg-clima-blue/90 text-white rounded-xl shadow-lg p-4 sm:p-5 md:p-6 flex items-center justify-center gap-3 sm:gap-4 transition-all duration-300 transform hover:scale-105 hover:shadow-xl group"
+              >
+                <div className="bg-white/20 rounded-full p-2 sm:p-2.5 md:p-3 group-hover:bg-white/30 transition-colors flex-shrink-0">
+                  <svg
+                    className="w-6 h-6 sm:w-7 sm:h-7 md:w-8 md:h-8"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+                    />
+                  </svg>
+                </div>
+                <div className="text-left">
+                  <h3 className="text-lg sm:text-xl font-bold mb-0.5 sm:mb-1">Email</h3>
+                  <p className="text-white/90 text-xs sm:text-sm break-all">contacto@climargentina.com.ar</p>
+                </div>
+              </a>
             </div>
 
-            {/* Información de Contacto */}
-            <div className="space-y-6">
-              <div className="bg-gradient-to-br from-clima-blue/10 to-clima-blue/5 rounded-xl p-8">
-                <h3 className="text-2xl font-bold text-clima-blue mb-6">
-                  Información de contacto
-                </h3>
-                <div className="space-y-4">
-                  <div className="flex items-start">
-                    <svg
-                      className="w-6 h-6 text-clima-red mr-3 mt-1 flex-shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"
-                      />
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"
-                      />
-                    </svg>
-                    <div>
-                      <p className="font-semibold text-clima-blue">Ubicación</p>
-                      <p className="text-gray-700">Argentina</p>
-                    </div>
-                  </div>
+            {/* Información Adicional */}
+            <div className="grid md:grid-cols-2 gap-4 sm:gap-6">
+              <div className="flex items-start">
+                <span className="text-xl sm:text-2xl mr-2 sm:mr-3 mt-0.5 sm:mt-1 flex-shrink-0" role="img" aria-label="Bandera Argentina">
+                  🇦🇷
+                </span>
+                <div>
+                  <p className="font-semibold text-sm sm:text-base text-clima-blue mb-0.5 sm:mb-1">Ubicación</p>
+                  <p className="text-sm sm:text-base text-gray-700">Buenos Aires, Argentina</p>
+                </div>
+              </div>
 
-                  <div className="flex items-start">
-                    <svg
-                      className="w-6 h-6 text-clima-red mr-3 mt-1 flex-shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z"
-                      />
-                    </svg>
-                    <div>
-                      <p className="font-semibold text-clima-blue">Teléfono</p>
-                      <p className="text-gray-700">+54 11 XXX-XXXX</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start">
-                    <svg
-                      className="w-6 h-6 text-clima-red mr-3 mt-1 flex-shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
-                      />
-                    </svg>
-                    <div>
-                      <p className="font-semibold text-clima-blue">Email</p>
-                      <p className="text-gray-700">contacto@climargentina.com</p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-start">
-                    <svg
-                      className="w-6 h-6 text-clima-red mr-3 mt-1 flex-shrink-0"
-                      fill="none"
-                      stroke="currentColor"
-                      viewBox="0 0 24 24"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth="2"
-                        d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
-                      />
-                    </svg>
-                    <div>
-                      <p className="font-semibold text-clima-blue">Horarios</p>
-                      <p className="text-gray-700">Lunes a Viernes: 8:00 - 18:00</p>
-                      <p className="text-gray-700">Sábados: 8:00 - 13:00</p>
-                    </div>
-                  </div>
+              <div className="flex items-start">
+                <svg
+                  className="w-5 h-5 sm:w-6 sm:h-6 text-clima-red mr-2 sm:mr-3 mt-0.5 sm:mt-1 flex-shrink-0"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth="2"
+                    d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                  />
+                </svg>
+                <div>
+                  <p className="font-semibold text-sm sm:text-base text-clima-blue mb-0.5 sm:mb-1">Horarios</p>
+                  <p className="text-sm sm:text-base text-gray-700">Lunes a Viernes: 8:00 - 17:00</p>
+                  <p className="text-sm sm:text-base text-gray-700">Sábados: 8:00 - 13:00</p>
                 </div>
               </div>
             </div>
@@ -678,18 +795,18 @@ const LandingClimargentina = () => {
       </section>
 
       {/* Footer */}
-      <footer className="bg-clima-blue text-clima-white py-12">
+      <footer className="bg-clima-blue text-clima-white py-8 sm:py-10 md:py-12">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="grid md:grid-cols-3 gap-8 mb-8">
+          <div className="grid md:grid-cols-3 gap-6 sm:gap-8 mb-6 sm:mb-8">
             <div>
-              <h3 className="text-xl font-bold mb-4">Climargentina</h3>
-              <p className="text-clima-white/80">
-                Climatización automotriz e industrial de confianza.
+              <h3 className="text-lg sm:text-xl font-bold mb-3 sm:mb-4">Climargentina</h3>
+              <p className="text-sm sm:text-base text-clima-white/80">
+                Climatización industrial de confianza.
               </p>
             </div>
             <div>
-              <h4 className="text-lg font-semibold mb-4">Enlaces rápidos</h4>
-              <ul className="space-y-2">
+              <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Enlaces rápidos</h4>
+              <ul className="space-y-1.5 sm:space-y-2">
                 <li>
                   <button
                     onClick={() => handleScrollTo('inicio')}
@@ -725,8 +842,8 @@ const LandingClimargentina = () => {
               </ul>
             </div>
             <div>
-              <h4 className="text-lg font-semibold mb-4">Seguinos</h4>
-              <div className="flex space-x-4">
+              <h4 className="text-base sm:text-lg font-semibold mb-3 sm:mb-4">Seguinos</h4>
+              <div className="flex space-x-3 sm:space-x-4">
                 <a
                   href="#"
                   className="text-clima-white/80 hover:text-clima-white transition-colors"
@@ -757,11 +874,39 @@ const LandingClimargentina = () => {
               </div>
             </div>
           </div>
-          <div className="border-t border-clima-white/20 pt-8 text-center text-clima-white/80">
-            <p>&copy; {new Date().getFullYear()} Climargentina. Todos los derechos reservados.</p>
+          <div className="border-t border-clima-white/20 pt-6 sm:pt-8 text-center text-clima-white/80">
+            <p className="text-xs sm:text-sm px-2">
+              &copy; {new Date().getFullYear()} Climargentina. Todos los derechos reservados. - Creado por:{' '}
+              <a
+                href="https://www.excalicode.com.ar"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-clima-white hover:text-clima-red transition-colors underline"
+              >
+                Excalicode
+              </a>
+            </p>
           </div>
         </div>
       </footer>
+
+      {/* Botón flotante de WhatsApp */}
+      <a
+        href="https://wa.me/541151160924"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="fixed bottom-4 right-4 sm:bottom-6 sm:right-6 z-50 bg-[#25D366] hover:bg-[#20BA5A] text-white rounded-full p-3 sm:p-4 shadow-2xl hover:shadow-[#25D366]/50 transition-all duration-300 transform hover:scale-110 touch-manipulation"
+        aria-label="Contactar por WhatsApp"
+        title="Contactar por WhatsApp"
+      >
+        <svg
+          className="w-5 h-5 sm:w-6 sm:h-6"
+          fill="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+        </svg>
+      </a>
     </div>
   )
 }
